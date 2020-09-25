@@ -1,5 +1,5 @@
 # Emotion/Stylis Prefixing Bug
-This repo contains an example of a bug, where in production `animation` css property is not being prefixed in production bundle, 
+This repo contains an example of a bug, where `animation` css property is not being prefixed in production bundle, 
 unlike `flex` and etc.
 
 ## Steps to reproduce
