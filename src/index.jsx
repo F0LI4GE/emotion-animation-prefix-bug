@@ -1,45 +1,36 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import styled from "@emotion/styled";
-import {keyframes} from "@emotion/core";
+import React, { Suspense, lazy } from 'react';
+import ReactDOM from 'react-dom'
+import { LoadingBox } from './LoadingBox';
 
-const bounce = keyframes`
-  from, 20%, 53%, 80%, to {
-    transform: translate3d(0, 0, 0);
-  }
- 
-  40%, 43% {
-    transform: translate3d(0, -30px, 0);
-  }
- 
-  70% {
-    transform: translate3d(0, -15px, 0);
-  }
- 
-  90% {
-    transform: translate3d(0,-4px,0);
-  }
-`;
+/*
+  Both LoadingBox animations (from FallbackComponent and HeavyComponent) work fine, animation are there
+  when imported like so:
+*/
+// import HeavyComponent from './HeavyComponent';
 
-const Animation = styled.div`
-  box-sizing: border-box;
-  width: 200px;
-  height: 100px;
-  
-  background-color: aliceblue;
-  
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  margin: 100px auto 0 auto;
-  
-  animation: ${bounce} 1s ease infinite;
-`
+/*
+  Related to iOS webkit browsers only!
+  If imported using "lazy":
+  only the first animation from FallbackComponent will start,
+  HeavyComponent's loading animation won't start.
+*/
+const HeavyComponent = lazy(() => {
+  return new Promise(resolve => {
+    setTimeout(() => resolve(import('./HeavyComponent')), 3000);
+  });
+});
 
-const App = () => (
-  <Animation><div>Hello</div></Animation>
+const FallbackComponent = () => (
+  <div>
+    <span>Fallback Component</span>
+    <LoadingBox />
+  </div>
 );
 
+const App = () => (
+  <Suspense fallback={<FallbackComponent />}>
+    <HeavyComponent />
+  </Suspense>
+);
 
 ReactDOM.render(<App />, document.getElementById('app'));
